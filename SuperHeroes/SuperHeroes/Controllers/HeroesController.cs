@@ -1,6 +1,7 @@
 ﻿using SuperHeroes.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -9,7 +10,7 @@ namespace SuperHeroes.Controllers
 {
     public class HeroesController : Controller
     {
-        ApplicationDbContext db = new ApplicationDbContext();
+       ApplicationDbContext db = new ApplicationDbContext();
         //public Heroes GetHeroById(int id)
         //{
         //    Heroes hero;
@@ -23,9 +24,15 @@ namespace SuperHeroes.Controllers
             var heroes = db.Heroes;
             return View(heroes);
         }
+
+        public ActionResult Create()
+        {
+            //ViewBag.Name = new SelectList(db.Heroes, "ID", "Name", hero.ID);
+            return View();
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Name")] Heroes hero)
+        public ActionResult Create([Bind(Include = "ID,Name, AlterEgo, PrimaryAbility, SecondaryAbility, Catchphrase")] Heroes hero)
         {
             if (ModelState.IsValid)
             {
@@ -35,8 +42,33 @@ namespace SuperHeroes.Controllers
             }
 
 
-            //ViewBag.Name = new SelectList(db.Heroes, "ID", "Name", hero.Name);
+            ViewBag.Name = new SelectList(db.Heroes, "ID","Name", hero.ID);
             return View(hero);
+        }
+        public ActionResult Edit(int ID = 0)
+        {
+            var heroes = db.Heroes.Find(ID);
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Heroes hero)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(hero).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(hero);
+        }
+        public ActionResult Details (int? ID)
+        {
+            if (ID == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCodeResult.BadRequest)
+            }
         }
     }
 }
