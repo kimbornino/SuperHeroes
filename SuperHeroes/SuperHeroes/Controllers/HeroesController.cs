@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -67,8 +68,40 @@ namespace SuperHeroes.Controllers
         {
             if (ID == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCodeResult.BadRequest)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
+            var heroes = db.Heroes.Find(ID);
+            if (heroes == null)
+            {
+                return HttpNotFound();
+            }
+            return View(heroes);
+        }
+        // GET: /Movies/Delete/5
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var heroes = db.Heroes.Find(id);
+            if (heroes == null)
+            {
+                return HttpNotFound();
+            }
+            return View(heroes);
+        }
+
+        // POST: /Movies/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            var heroes = db.Heroes.Find(id);
+            db.Heroes.Remove(heroes);
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }
