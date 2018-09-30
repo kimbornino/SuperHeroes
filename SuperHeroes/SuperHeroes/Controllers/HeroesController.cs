@@ -12,12 +12,7 @@ namespace SuperHeroes.Controllers
     public class HeroesController : Controller
     {
        ApplicationDbContext db = new ApplicationDbContext();
-        //public Heroes GetHeroById(int id)
-        //{
-        //    Heroes hero;
-        //    // query for hero by ID
-        //    return hero;
-        //}
+
         // GET: Heroes
         public ActionResult Index()
         {
